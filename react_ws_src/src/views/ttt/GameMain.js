@@ -1,11 +1,10 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react';
 
-import io from 'socket.io-client'
+import io from 'socket.io-client';
 
-import TweenMax from 'gsap'
-
-import rand_arr_elem from '../../helpers/rand_arr_elem'
-import rand_to_fro from '../../helpers/rand_to_fro'
+import TweenMax from 'gsap';
+import rand_to_fro from '../../helpers/rand_to_fro';
+import { get_computer_move } from '../../helpers/computer_moves';
 
 export default class SetName extends Component {
 
@@ -174,7 +173,7 @@ export default class SetName extends Component {
 
 		cell_vals[cell_id] = 'x'
 
-		TweenMax.from(this.refs[cell_id], 0.7, {opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeOut})
+		this.animate_cell(cell_id);
 
 
 		// this.setState({
@@ -192,29 +191,15 @@ export default class SetName extends Component {
 //	------------------------	------------------------	------------------------
 
 	turn_comp () {
+		const { cell_vals } = this.state;
+		const cell_id = get_computer_move(cell_vals);
+		cell_vals[cell_id] = 'o';
 
-		let { cell_vals } = this.state
-		let empty_cells_arr = []
+		this.animate_cell(cell_id);
 
+		this.state.cell_vals = cell_vals;
 
-		for (let i=1; i<=9; i++) 
-			!cell_vals['c'+i] && empty_cells_arr.push('c'+i)
-		// console.log(cell_vals, empty_cells_arr, rand_arr_elem(empty_cells_arr))
-
-		const c = rand_arr_elem(empty_cells_arr)
-		cell_vals[c] = 'o'
-
-		TweenMax.from(this.refs[c], 0.7, {opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeOut})
-
-
-		// this.setState({
-		// 	cell_vals: cell_vals,
-		// 	next_turn_ply: true
-		// })
-
-		this.state.cell_vals = cell_vals
-
-		this.check_turn()
+		this.check_turn();
 	}
 
 
@@ -227,7 +212,7 @@ export default class SetName extends Component {
 
 		cell_vals[cell_id] = 'x'
 
-		TweenMax.from(this.refs[cell_id], 0.7, {opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeOut})
+		this.animate_cell(cell_id);
 
 		this.socket.emit('ply_turn', { cell_id: cell_id });
 
@@ -254,7 +239,7 @@ export default class SetName extends Component {
 		const c = data.cell_id
 		cell_vals[c] = 'o'
 
-		TweenMax.from(this.refs[c], 0.7, {opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeOut})
+		this.animate_cell(c);
 
 
 		// this.setState({
@@ -339,5 +324,9 @@ export default class SetName extends Component {
 	}
 
 
-
+	animate_cell(cell_id) {
+		if (this.refs[cell_id]) {
+			TweenMax.from(this.refs[cell_id], 0.7, { opacity: 0, scaleX: 0, scaleY: 0, ease: Power4.easeOut });
+		}
+	}
 }
