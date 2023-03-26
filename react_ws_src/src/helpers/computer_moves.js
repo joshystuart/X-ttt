@@ -116,15 +116,13 @@ export function get_minimax(board, player) {
     return { score: 0 };
   }
 
-  // an array to collect all the objects
   const moves = [];
 
-  // loop through available spots
+  // loop through available moves
   for (let i = 0; i < available_moves.length; i++) {
     const move = {};
     move.index = board[available_moves[i]];
 
-    // set the empty spot to the current player
     board[available_moves[i]] = player;
 
     // calculate the scores
@@ -136,10 +134,7 @@ export function get_minimax(board, player) {
       move.score = result.score;
     }
 
-    // reset the spot to empty
     board[available_moves[i]] = move.index;
-
-    // push the object to the array
     moves.push(move);
   }
 
@@ -154,7 +149,7 @@ export function get_minimax(board, player) {
       }
     }
   } else {
-    // else loop over the moves and choose the move with the lowest score
+    // loop over the moves and choose the move with the lowest score
     let bestScore = Infinity;
     for (let i = 0; i < moves.length; i++) {
       if (moves[i].score < bestScore) {
